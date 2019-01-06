@@ -1,7 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { delTodo } from '../actions/todoActions';
+import { markComplete} from '../actions/todoActions';
 
 export class TodoItem extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { 
+      completed: this.props.todo.completed
+    }
+    this.handleComplete = this.handleComplete.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+  handleComplete() {
+    this.props.markComplete(this.props.todo.id, this.props.completed)
+    this.setState({
+      checked: !this.state.checked
+
+    })
+  }
+  handleDelete() {
+    this.props.delTodo(this.props.todo.id)
+  }
   getStyle = () => {
     return {
       background: '#f4f4f4',
@@ -10,15 +31,16 @@ export class TodoItem extends Component {
       textDecoration: this.props.todo.completed ? 'line-through' : 'none'
     }
   }
-
   render() {
-    const { id, title } = this.props.todo;
+    const { title } = this.props.todo;
     return (
       <div style={this.getStyle()}>
         <p>
-          <input type="checkbox" onChange={this.props.markComplete.bind(this, id)} /> {' '}
+          <input type="checkbox" defaultChecked={this.state.completed}
+         required={true} onClick={this.handleComplete}/> {' '}
           { title }
-          <button onClick={this.props.delTodo.bind(this, id)} style={btnStyle}>x</button>
+          <button style={btnStyle} onClick=
+        {this.handleDelete}>x</button>
         </p>
       </div>
     )
@@ -42,4 +64,4 @@ const btnStyle = {
   float: 'right'
 }
 
-export default TodoItem
+export default connect(null, { delTodo, markComplete })(TodoItem);
